@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lawrence Auto Sales – LLC</title>
+  <meta name="description" content="Quality pre-owned cars at Lawrence Auto Sales – LLC. Browse our inventory and drive home your next car today.">
+  <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/d/d5/Car_blue_vector.svg">
+  <style>
+    :root{
+      --bg:#0b1023; --panel:#111933; --accent:#22d3ee; --text:#e5e7eb; --muted:#cbd5e1; --line:#1f2937;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: var(--bg); color: var(--text);
+    }
+
+    /* Header */
+    header {
+      background: var(--panel);
+      border-bottom: 2px solid var(--accent);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 40px; position: sticky; top: 0; z-index: 10;
+    }
+    .brand { display: flex; align-items: center; gap: 16px; }
+    .brand img { height: 60px; }
+    .brand h1 { margin: 0; font-size: 1.8rem; font-weight: 900; color: var(--accent); letter-spacing: .5px; }
+    nav { display: flex; gap: 20px; }
+    nav a { color: var(--text); text-decoration: none; font-weight: 600; padding-bottom: 4px; }
+    nav a:hover, nav a.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+
+    /* Main hero */
+    main { padding: 40px; text-align: center; }
+    p { color: var(--muted); font-size: 1.05rem; max-width: 680px; margin: 12px auto 0; }
+
+    /* Sections */
+    section { padding: 40px; margin: 0 auto; max-width: 1200px; }
+    section h2 { margin: 0 0 16px; font-size: 1.6rem; }
+    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+
+    /* Inventory controls */
+    .filters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .filters input, .filters select {
+      background: #0e1630; color: var(--text); border: 1px solid var(--line);
+      border-radius: 10px; padding: 10px 12px; font-size: .95rem;
+    }
+    .inventory-summary { color: var(--muted); font-size: .95rem; margin-bottom: 8px; }
+
+    /* Cards */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .card {
+      background: #0e1630; border: 1px solid var(--line); border-radius: 16px; overflow: hidden;
+      display: flex; flex-direction: column; transition: transform .1s ease; cursor: pointer;
+    }
+    .card:hover { transform: translateY(-2px); }
+    .card img { width: 100%; height: 170px; object-fit: cover; background: #0b0f22; }
+    .card .body { padding: 12px 14px 16px; text-align: left; }
+    .card h3 { margin: 4px 0 6px; font-size: 1.05rem; color: var(--text); }
+    .meta { color: var(--muted); font-size: .9rem; display: flex; flex-wrap: wrap; gap: 10px; }
+    .price { margin-top: 10px; font-weight: 800; color: var(--accent); font-size: 1.1rem; }
+    .badge { display: inline-block; font-size: .75rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); margin-left: 8px; }
+
+    footer {
+      background: var(--panel); text-align: center; color: #9ca3af; padding: 16px;
+      margin-top: 40px; font-size: .9rem; border-top: 1px solid var(--line);
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 50;
+      left: 0; top: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-content {
+      background: #111933;
+      color: #e5e7eb;
+      border-radius: 16px;
+      max-width: 600px;
+      width: 100%;
+      padding: 24px;
+      position: relative;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+    .close {
+      position: absolute;
+      right: 12px;
+      top: 6px;
+      font-size: 2rem;
+      color: #9ca3af;
+      cursor: pointer;
+    }
+    .modal-content h3 {
+      font-size: 1.4rem;
+      color: #22d3ee;
+      margin: 8px 0;
+    }
+    .modal-content #modalMeta {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+    }
+    .modal-content #modalPrice {
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #22d3ee;
+      margin: 10px 0;
+    }
+    .modal-content button {
+      background: #22d3ee;
+      color: #0b1023;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .modal-content button:hover { background: #1ab6cf; }
+
+    /* Carousel */
+    .carousel {
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+      scroll-snap-type: x mandatory;
+      margin-bottom: 12px;
+    }
+    .carousel img, .carousel iframe {
+      flex: 0 0 auto;
+      width: 100%;
+      max-width: 580px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 12px;
+      scroll-snap-align: start;
+    }
+    .carousel::-webkit-scrollbar { display: none; }
+
+    @media (max-width: 720px){
+      header { padding: 12px 16px; }
+      main { padding: 24px 16px; }
+      section { padding: 24px 16px; }
+      .filters { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Car_blue_vector.svg" alt="Lawrence Auto Sales logo">
+      <h1>Lawrence Auto Sales – LLC</h1>
+    </div>
+    <nav>
+      <a href="#home" class="active">Home</a>
+      <a href="#inventory">Inventory</a>
+      <a href="#financing">Financing</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main id="home">
+    <h2>Welcome!</h2>
+    <p>We offer high-quality pre-owned vehicles at honest prices. Browse our inventory, schedule a test drive, and find your next car today.</p>
+  </main>
+
+  <section id="inventory">
+    <h2>Our Inventory</h2>
+    <div class="panel">
+      <div class="inventory-summary" id="invSummary">Loading inventory…</div>
+
+      <div class="filters">
+        <input id="q" type="search" placeholder="Search make/model… (e.g., Toyota Camry)">
+        <select id="year"><option value="">Any year</option></select>
+        <select id="sort">
+          <option value="featured">Sort: Featured</option>
+          <option value="price-asc">Price: Low → High</option>
+          <option value="price-desc">Price: High → Low</option>
+          <option value="year-desc">Year: New → Old</option>
+          <option value="miles-asc">Mileage: Low → High</option>
+        </select>
+        <select id="price">
+          <option value="">Any price</option>
+          <option value="0-9999">Under $10k</option>
+          <option value="10000-14999">$10k–$14,999</option>
+          <option value="15000-19999">$15k–$19,999</option>
+          <option value="20000-100000">$20k+</option>
+        </select>
+      </div>
+
+      <div class="grid" id="grid"></div>
+      <div id="empty" style="display:none; color:#9ca3af; text-align:center; padding:16px;">
+        No vehicles match your filters. Try clearing filters or search with fewer words.
+      </div>
+    </div>
+  </section>
+
+  <section id="financing">
+    <h2>Financing Options</h2>
+    <div class="panel">
+      <p>We partner with trusted lenders. Bring your driver’s license, proof of income, and insurance. We’ll help you find a monthly payment that fits your budget.</p>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <div class="panel">
+      <p>Email: <a href="mailto:sales@lawrenceauto.example" style="color:var(--accent)">sales@lawrenceauto.example</a><br>
+         Phone: (555) 123-4567<br>
+         Address: 123 Main St, Your City, ST</p>
+    </div>
+  </section>
+
+  <footer>© <span id="year"></span> Lawrence Auto Sales – LLC. All rights reserved.</footer>
+
+  <!-- Modal -->
+  <div id="carModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div id="modalMedia" class="carousel"></div>
+      <h3 id="modalTitle"></h3>
+      <div id="modalMeta"></div>
+      <p id="modalDesc"></p>
+      <div id="modalPrice" class="modal-price"></div>
+      <button id="modalContact">Contact Dealer</button>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const grid=document.getElementById("grid"),empty=document.getElementById("empty"),summary=document.getElementById("invSummary");
+    const q=document.getElementById("q"),yearSel=document.getElementById("year"),sortSel=document.getElementById("sort"),priceSel=document.getElementById("price");
+    let CARS=[];
+
+    async function loadInventory(){
+      try{
+        const res=await fetch("inventory.json",{cache:"no-store"});
+        if(!res.ok)throw new Error("inventory.json not found");
+        CARS=await res.json();
+        const years=[...new Set(CARS.map(c=>c.year))].sort((a,b)=>b-a);
+        years.forEach(y=>{const opt=document.createElement("option");opt.value=y;opt.textContent=y;yearSel.appendChild(opt);});
+        render();
+      }catch(e){summary.textContent="Couldn’t load inventory.";console.error(e);}
+    }
+
+    function inPriceRange(price,range){if(!range)return true;const [min,max]=range.split("-").map(Number);return price>=min&&price<=max;}
+
+    function render(){
+      const term=q.value.trim().toLowerCase(),yr=yearSel.value,priceRange=priceSel.value,sort=sortSel.value;
+      let list=CARS.filter(c=>{
+        const t=`${c.year} ${c.make} ${c.model} ${c.trim||""} ${c.color||""}`.toLowerCase();
+        return (!term||t.includes(term))&&( !yr||String(c.year)===yr)&&(inPriceRange(c.price,priceRange));
+      });
+      list.sort((a,b)=>{
+        if(sort==="featured"){if((b.featured|0)!==(a.featured|0))return(b.featured|0)-(a.featured|0);if(b.year!==a.year)return b.year-a.year;return b.price-a.price;}
+        if(sort==="price-asc")return a.price-b.price;
+        if(sort==="price-desc")return b.price-a.price;
+        if(sort==="year-desc")return b.year-a.year;
+        if(sort==="miles-asc")return (a.mileage||0)-(b.mileage||0);
+        return 0;
+      });
+      grid.innerHTML="";list.forEach(car=>grid.appendChild(card(car)));
+      empty.style.display=list.length?"none":"block";
+      summary.textContent=`${list.length} of ${CARS.length} vehicles shown`;
+    }
+
+    function dollars(n){return n.toLocaleString(undefined,{style:"currency",currency:"USD",maximumFractionDigits:0});}
+
+    function card(car){
+      const d=document.createElement("div");d.className="card";
+      const img=document.createElement("img");
+      img.src=(car.images&&car.images[0])||"https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg";
+      img.alt=`${car.year} ${car.make} ${car.model}`;d.appendChild(img);
+      const b=document.createElement("div");b.className="body";
+      const h=document.createElement("h3");h.textContent=`${car.year} ${car.make} ${car.model}`;
+      if(car.featured){const badge=document.createElement("span");badge.className="badge";badge.textContent="Featured";h.appendChild(badge);}
+      const m=document.createElement("div");m.className="meta";
+      m.innerHTML=`${car.mileage?`<span>${car.mileage.toLocaleString()} mi</span>`:""}${car.transmission?`<span>${car.transmission}</span>`:""}${car.drivetrain?`<span>${car.drivetrain}</span>`:""}${car.color?`<span>${car.color}</span>`:""}`;
+      const p=document.createElement("div");p.className="price";p.textContent=dollars(car.price);
+      const desc=document.createElement("div");desc.className="meta";if(car.description)desc.textContent=car.description;
+      b.append(h,m,p,desc);d.appendChild(b);d.onclick=()=>openModal(car);return d;
+    }
+
+    [q,yearSel,sortSel,priceSel].forEach(el=>el.addEventListener("input",render));
+    loadInventory();
+
+    // ===== Modal logic =====
+    const modal=document.getElementById("carModal");
+    const modalMedia=document.getElementById("modalMedia");
+    const modalTitle=document.getElementById("modalTitle");
+    const modalMeta=document.getElementById("modalMeta");
+    const modalDesc=document.getElementById("modalDesc");
+    const modalPrice=document.getElementById("modalPrice");
+    const modalContact=document.getElementById("modalContact");
+    const closeBtn=document.querySelector(".close");
+    let slideTimer;
+
+    function openModal(car){
+      modal.style.display="flex";
+      modalMedia.innerHTML="";
+      if(car.images&&car.images.length){
+        car.images.forEach(url=>{
+          const img=document.createElement("img");
+          img.src=url;img.alt=`${car.year} ${car.make} ${car.model}`;
+          modalMedia.appendChild(img);
+        });
+        // auto-scroll every 3s
+        let index=0;
+        clearInterval(slideTimer);
+        slideTimer=setInterval(()=>{
+          if(modalMedia.children.length>0){
+            index=(index+1)%modalMedia.children.length;
+            modalMedia.scrollTo({left:index*modalMedia.clientWidth,behavior:"smooth"});
+          }
+        },3000);
+      }
+      if(car.video){
+        const iframe=document.createElement("iframe");
+        iframe.src=car.video;
+        iframe.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+        iframe.allowFullscreen=true;
+        modalMedia.appendChild(iframe);
+      }
+      modalTitle.textContent=`${car.year} ${car.make} ${car.model}`;
+      modalMeta.innerHTML=`${car.mileage?car.mileage.toLocaleString()+" mi • ":""}${car.color?car.color+" • ":""}${car.transmission?car.transmission+" • ":""}${car.drivetrain||""}`;
+      modalDesc.textContent=car.description||"";
+      modalPrice.textContent=dollars(car.price);
+      modalContact.onclick=()=>alert(\`Contact us about the \${car.year} \${car.make} \${car.model}\`);
+    }
+
+    closeBtn.onclick=()=>{modal.style.display="none";clearInterval(slideTimer);};
+    modal.onclick=e=>{if(e.target===modal){modal.style.display="none";clearInterval(slideTimer);}};
+  </script>
+</body>
+</html>
