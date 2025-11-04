@@ -1,0 +1,53 @@
+[
+  {
+    "id": "la-001",
+    "featured": true,
+    "year": 2019,
+    "make": "Toyota",
+    "model": "Camry SE",
+    "price": 17990,
+    "mileage": 68500,
+    "transmission": "Automatic",
+    "drivetrain": "FWD",
+    "color": "Silver",
+    "images": [
+      "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1511910849309-0e9d7d6e681c?q=80&w=1600&auto=format&fit=crop"
+    ],
+    "description": "One-owner, clean title, new tires, Bluetooth, backup camera, and great gas mileage."
+  },
+  {
+    "id": "la-002",
+    "featured": false,
+    "year": 2017,
+    "make": "Honda",
+    "model": "CR-V EX",
+    "price": 16450,
+    "mileage": 92300,
+    "transmission": "CVT",
+    "drivetrain": "AWD",
+    "color": "Blue",
+    "images": [
+      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?q=80&w=1600&auto=format&fit=crop"
+    ],
+    "description": "All-wheel drive, sunroof, heated seats, Apple CarPlay, new brakes, excellent condition."
+  },
+  {
+    "id": "la-003",
+    "featured": true,
+    "year": 2020,
+    "make": "Nissan",
+    "model": "Altima S",
+    "price": 15800,
+    "mileage": 50750,
+    "transmission": "Automatic",
+    "drivetrain": "FWD",
+    "color": "White",
+    "images": [
+      "https://images.unsplash.com/photo-1549924231-f129b911e442?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?q=80&w=1600&auto=format&fit=crop"
+    ],
+    "description": "Excellent condition inside and out. Great MPG, new battery, and a smooth ride."
+  }
+]
